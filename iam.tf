@@ -39,8 +39,20 @@ resource "aws_iam_role_policy" "github_actions_policy" {
     Version = "2012-10-17"
     Statement = [
       {
-        Effect = "Allow",
-        Action = ["*"]
+        Effect = "Allow"
+        Action = [
+          "ecr:CompleteLayerUpload",
+          "ecr:BatchGetImage",
+          "ecr:UploadLayerPart",
+          "ecr:InitiateLayerUpload",
+          "ecr:BatchCheckLayerAvailability",
+          "ecr:PutImage"
+        ]
+        Resource = var.ecr_repository
+      },
+      {
+        Effect   = "Allow"
+        Action   = "ecr:GetAuthorizationToken"
         Resource = "*"
       }
     ]
