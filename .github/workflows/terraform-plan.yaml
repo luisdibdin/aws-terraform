@@ -11,6 +11,10 @@ on:
         required: false
         type: string
         default: eu-west-2
+    outputs:
+      tfplan:
+        description: "The output of terraform plan"
+        value: ${{ jobs.plan.outputs.tfplan }}
     secrets:
       TERRAFORM_PLAN_ROLE_ARN:
         required: true
@@ -23,13 +27,12 @@ jobs:
       run:
         shell: bash
         working-directory: ./terraform
+    outputs:
+      tfplan: ${{ steps.plan.outputs.stdout }}
   
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
-      
-      - name: Debug
-        run: ls -la
       
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
@@ -131,4 +134,4 @@ jobs:
             }
 
       - name: Terraform Plan Outcome
-        run: echo ${{ steps.plan.outputs.exitcode }}
+        run: exit ${{ steps.plan.outputs.exitcode }}
