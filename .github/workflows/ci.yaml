@@ -13,6 +13,6 @@ permissions:
 jobs:
   terraform-plan:
     name: Terraform Plan
-    uses: luisdibdin/aws-terraform/.github/workflows/terraform-plan.yaml@main
+    uses: luisdibdin/aws-terraform/.github/workflows/terraform-plan.yaml@lambda-layer
     secrets:
       OICD_READ_ONLY_IAM_ROLE_ARN: ${{ secrets.TERRAFORM_PLAN_ROLE_ARN }}

@@ -20,8 +20,9 @@ jobs:
     name: Terraform Plan
     runs-on: ubuntu-latest
     defaults:
-      shell: bash
-      working-directory: ./terraform
+      run:
+        shell: bash
+        working-directory: ./terraform
   
     steps:
       - name: Checkout Code
@@ -33,7 +34,7 @@ jobs:
           terraform_version: 1.7.3
       
       - name: Configure AWS Credentials
-        uses: aws-actions/confugure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ secrets.OICD_READ_ONLY_IAM_ROLE_ARN }}
           role-session-name: GitHubActionOICDTerraformPlan
