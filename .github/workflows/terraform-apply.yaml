@@ -1,0 +1,63 @@
+---
+name: Terraform Plan
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        required: true
+        type: string
+      tfplan:
+        required: true
+        type: string
+      region:
+        required: false
+        type: string
+        default: eu-west-2
+    secrets:
+      TERRAFORM_APPLY_ROLE_ARN:
+        required: true
+
+jobs:
+  apply:
+    name: Terraform Apply
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    defaults:
+      run:
+        shell: bash
+        working-directory: ./terraform
+  
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+      
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.7.3
+      
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.TERRAFORM_APPLY_ROLE_ARN }}
+          role-session-name: GitHubActionOICDTerraformApply
+          aws-region: ${{ inputs.region }}
+
+      - name: Create Backend Config
+        run: |
+          cat << EOF > backend.hcl
+          bucket         = "luis-dibdin-terraform-state-bucket"
+          dynamodb_table = "terraform-locks"
+          key            = "terraform.tfstate"
+          region         = "eu-west-2"
+          encrypt        = true
+          EOF
+
+      - name: Terraform init
+        id: init
+        run: terraform init -input=false -backend-config=backend.hcl
+
+      - name: Terraform Apply
+        id: apply
+        run: terraform apply -var-file=terraform.tfvars ${{ inputs.tfplan }}

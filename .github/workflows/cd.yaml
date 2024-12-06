@@ -1,0 +1,30 @@
+---
+name: CD
+
+on:
+  push:
+    branches:
+      - main
+  
+permissions:
+  contents: read
+  pull-requests: write
+  id-token: write
+
+jobs:
+  terraform-plan:
+    name: Terraform Plan
+    uses: luisdibdin/aws-terraform/.github/workflows/terraform-plan.yaml@lambda-layer
+    secrets:
+      inherit
+  terraform-apply:
+    name: Terraform Apply
+    needs: terraform-plan
+    uses: luisdibdin/aws-terraform/.github/workflows/terraform-apply.yaml@lambda-layer
+    with:
+      environment: dev
+      tfplan: ${{ needs.terraform-plan.outputs.tfplan }}
+    secrets:
+      inherit
+      
+  
