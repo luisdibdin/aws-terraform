@@ -1,0 +1,78 @@
+---
+name: Terraform Plan
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        required: false
+        type: string
+      region:
+        required: false
+        type: string
+        default: eu-west-2
+    secrets:
+      OICD_READ_ONLY_IAM_ROLE_ARN:
+        required: true
+
+jobs:
+  plan:
+    name: Terraform Plan
+    runs-on: ubuntu-latest
+    defaults:
+      shell: bash
+      working-directory: ./terraform
+  
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+      
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.7.3
+      
+      - name: Configure AWS Credentials
+        uses: aws-actions/confugure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.OICD_READ_ONLY_IAM_ROLE_ARN }}
+          role-session-name: GitHubActionOICDTerraformPlan
+          aws-region: ${{ inputs.region }}
+
+      - name: Create Backend Config
+        run: |
+          cat << EOF > backend.hcl
+          bucket         = "luis-dibdin-terraform-state-bucket"
+          dynamodb_table = "terraform-locks"
+          key            = "terraform.tfstate"
+          region         = "eu-west-2"
+          encrypt        = true
+          EOF
+
+      - name: Terraform init
+        run: terraform init -input=false -backed-config="backend.hcl"
+
+      - name: Terraform Validate
+        run: terraform validate
+
+      - name: Terraform Plan
+        run: terraform plan -input=false -var-file=terraform.tfvars -out=tfplan > plan.txt
+
+      - name: Generate Plan Summary
+        run: |
+          terraform show -no-color tfplan > plan-summary.txt
+          echo "PLAN_OUTPUT<<EOF" >> $GITHUB_ENV
+          cat plan-summary.txt >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+
+      - name: Comment on PR
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const planOutput = process.env.PLAN_OUTPUT;
+            github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issues_numder: context.payload.pull_request.number,
+              body: `### Terraform Plan\n\`\`\`hcl\n${planOutput}\n\`\`\``,
+            })
