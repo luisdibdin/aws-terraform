@@ -68,7 +68,7 @@ jobs:
 
       - name: Terraform Plan
         id: plan
-        run: terraform plan -var-file="terraform.tfvars" -no-color
+        run: terraform plan -var-file=terraform.tfvars -no-color
         continue-on-error: true
 
       - name: Create PR Comment
@@ -129,3 +129,6 @@ jobs:
                 body: output
               })
             }
+
+      - name: Terraform Plan Outcome
+        run: echo ${{ steps.plan.outputs.exitcode }}
