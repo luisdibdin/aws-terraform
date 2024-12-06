@@ -14,13 +14,13 @@ permissions:
 jobs:
   terraform-plan:
     name: Terraform Plan
-    uses: luisdibdin/aws-terraform/.github/workflows/terraform-plan.yaml@lambda-layer
+    uses: luisdibdin/aws-terraform/.github/workflows/terraform-plan.yaml@main
     secrets:
       inherit
   terraform-apply:
     name: Terraform Apply
     needs: terraform-plan
-    uses: luisdibdin/aws-terraform/.github/workflows/terraform-apply.yaml@lambda-layer
+    uses: luisdibdin/aws-terraform/.github/workflows/terraform-apply.yaml@main
     with:
       environment: dev
       tfplan: ${{ needs.terraform-plan.outputs.tfplan }}
