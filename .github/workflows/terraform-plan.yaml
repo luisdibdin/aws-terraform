@@ -32,7 +32,7 @@ jobs:
         shell: bash
         working-directory: ./terraform
     outputs:
-      tfplan-diff: ${{ steps.plan-outcome.outputs.tfplan-diff }}
+      tfplan-diff: ${{ steps.outcome.outputs.tfplan-diff }}
   
     steps:
       - name: Checkout Code
@@ -140,7 +140,7 @@ jobs:
             }
 
       - name: Terraform Plan Outcome
-        id: plan-outcome
+        id: outcome
         run: |
           if [ ${{ steps.plan.outputs.exitcode }} -eq 1 ]; then
             echo "Terraform plan failed with an error."
@@ -153,12 +153,9 @@ jobs:
             echo "tfplan-diff=true" >> $GITHUB_OUTPUT
           fi
           exit 0
-   
-      - name: Debug
-        run: echo "${{ steps.plan-outcome.outputs.tfplan-diff }}"
 
       - name: Upload Plan Artifact
-        if: inputs.upload-plan
+        if: inputs.upload-plan && steps.outcome.outputs.tfplan-diff == 'true'
         uses: actions/upload-artifact@v4
         with:
           name: tfplan-${{ github.sha }}
