@@ -16,9 +16,9 @@ on:
         type: boolean
         default: false
     outputs:
-      tfplan-artifact-path:
-        description: "The output of terraform plan"
-        value: ${{ jobs.plan.outputs.tfplan }}
+      tfplan-diff:
+        description: "Whether there are changes found in the terraform plan"
+        value: ${{ jobs.plan.outputs.tfplan-diff }}
     secrets:
       TERRAFORM_PLAN_ROLE_ARN:
         required: true
@@ -32,7 +32,7 @@ jobs:
         shell: bash
         working-directory: ./terraform
     outputs:
-      tfplan: ${{ steps.plan.outputs.stdout }}
+      tfplan-diff: ${{ steps.outcome.outputs.tfplan-diff }}
   
     steps:
       - name: Checkout Code
@@ -76,7 +76,7 @@ jobs:
       - name: Terraform Plan
         id: plan
         run: |
-          terraform plan -var-file=terraform.tfvars -no-color -out=/tmp/tfplan
+          terraform plan -var-file=terraform.tfvars -no-color -detailed-exitcode -out=/tmp/tfplan
           echo "plan-file=/tmp/tfplan" >> $GITHUB_OUTPUT
         continue-on-error: true
 
@@ -140,7 +140,20 @@ jobs:
             }
 
       - name: Terraform Plan Outcome
-        run: exit ${{ steps.plan.outputs.exitcode }}
+        id: outcome
+        run: |
+          if [ ${{ steps.plan.outputs.exitcode }} -eq 1 ]; then
+            echo "Terraform plan failed with an error."
+            exit 1
+          elif [ ${{ steps.plan.outputs.exitcode }} -eq 0 ]; then
+            echo "Terraform plan has no changes."
+            echo "tfplan-diff=false" >> $GITHUB_ENV
+          elif [ ${{ steps.plan.outputs.exitcode }} -eq 2 ]; then
+            echo "Terraform plan found changes."
+            echo "tfplan-diff=true" >> $GITHUB_ENV
+          fi
+          exit 0
+   
 
       - name: Upload Plan Artifact
         if: ${{ inputs.upload-plan }}

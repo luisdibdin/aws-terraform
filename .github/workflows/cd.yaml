@@ -22,6 +22,7 @@ jobs:
   terraform-apply:
     name: Terraform Apply
     needs: terraform-plan
+    if: ${{ needs.terraform-plan.outputs.tfplan-diff }}
     uses: luisdibdin/aws-terraform/.github/workflows/terraform-apply.yaml@main
     with:
       environment: dev
