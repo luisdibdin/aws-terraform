@@ -12,7 +12,7 @@ This workflow runs a terraform plan and posts the result as comment if running o
 
 - 0: succesful plan with no changes
 - 1: an error in the plan
-- 2: a succesfful plan with changes
+- 2: a succesful plan with changes
 
 This workflow uses this to output a variable, tfplan-diff, which can be used to determine whether to run the apply workflow.
 
