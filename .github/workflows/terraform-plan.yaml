@@ -75,7 +75,9 @@ jobs:
 
       - name: Terraform Plan
         id: plan
-        run: terraform plan -var-file=terraform.tfvars -no-color -out=tfplan
+        run: |
+          terraform plan -var-file=terraform.tfvars -no-color -out=tfplan
+          echo "plan-file=tfplan" >> $GITHUB_OUTPUT
         continue-on-error: true
 
       - name: Create PR Comment
@@ -145,4 +147,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ${{ github.sha }}-terraform-plan
-          path: tfplan
+          path: ${{ steps.plan.outputs.plan-file }}
