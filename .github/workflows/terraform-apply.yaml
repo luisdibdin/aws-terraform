@@ -56,11 +56,6 @@ jobs:
         with:
           name: ${{ github.sha }}-terraform-plan
 
-      - name: Debug
-        run: |
-          cd ..
-          ls -R
-
       - name: Terraform init
         id: init
         run: terraform init -input=false -backend-config=backend.hcl
