@@ -142,14 +142,13 @@ jobs:
       - name: Terraform Plan Outcome
         id: outcome
         run: |
-          echo "${{ steps.plan.outcome.exitcode }}"
-          if [ ${{ steps.plan.outcome.exitcode }} -eq 1 ]; then
+          if [ ${{ steps.plan.outputs.exitcode }} -eq 1 ]; then
             echo "Terraform plan failed with an error."
             exit 1
-          elif [ ${{ steps.plan.outcome.exitcode }} -eq 0 ]; then
+          elif [ ${{ steps.plan.outputs.exitcode }} -eq 0 ]; then
             echo "Terraform plan has no changes."
             echo "tfplan-diff=false" >> $GITHUB_ENV
-          elif [ ${{ steps.plan.outcome.exitcode }} -eq 2 ]; then
+          elif [ ${{ steps.plan.outputs.exitcode }} -eq 2 ]; then
             echo "Terraform plan found changes."
             echo "tfplan-diff=true" >> $GITHUB_ENV
           fi
