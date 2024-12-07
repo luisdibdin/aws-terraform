@@ -11,8 +11,12 @@ on:
         required: false
         type: string
         default: eu-west-2
+      upload-plan:
+        required: false
+        type: boolean
+        default: false
     outputs:
-      tfplan:
+      tfplan-artifact-path:
         description: "The output of terraform plan"
         value: ${{ jobs.plan.outputs.tfplan }}
     secrets:
@@ -71,7 +75,7 @@ jobs:
 
       - name: Terraform Plan
         id: plan
-        run: terraform plan -var-file=terraform.tfvars -no-color
+        run: terraform plan -var-file=terraform.tfvars -no-color -out=tfplan
         continue-on-error: true
 
       - name: Create PR Comment
@@ -135,3 +139,10 @@ jobs:
 
       - name: Terraform Plan Outcome
         run: exit ${{ steps.plan.outputs.exitcode }}
+
+      - name: Upload Plan Artifact
+        if: ${{ inputs.upload-plan }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ github.sha }}-terraform-plan
+          path: tfplan

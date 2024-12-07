@@ -20,7 +20,7 @@ on:
 
 jobs:
   apply:
-    name: Terraform Apply
+    name: ${{ inputs.environment }}
     runs-on: ubuntu-latest
     environment: ${{ inputs.environment }}
     defaults:
@@ -54,10 +54,15 @@ jobs:
           encrypt        = true
           EOF
 
+      - name: Download Plan Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ github.sha }}-terraform-plan
+
       - name: Terraform init
         id: init
         run: terraform init -input=false -backend-config=backend.hcl
 
       - name: Terraform Apply
         id: apply
-        run: terraform apply -var-file=terraform.tfvars ${{ inputs.tfplan }}
+        run: terraform apply -var-file=terraform.tfvars ${{ github.sha }}-terraform-plan
