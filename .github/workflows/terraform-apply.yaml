@@ -58,6 +58,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: ${{ github.sha }}-terraform-plan
+          path: actions
 
       - name: Debug
         run: ls -R
@@ -68,4 +69,4 @@ jobs:
 
       - name: Terraform Apply
         id: apply
-        run: terraform apply -var-file=terraform.tfvars ${{ github.sha }}-terraform-plan
+        run: terraform apply -var-file=terraform.tfvars actions/${{ github.sha }}-terraform-plan
