@@ -57,7 +57,9 @@ jobs:
           name: ${{ github.sha }}-terraform-plan
 
       - name: Debug
-        run: ls -R
+        run: |
+          cd ..
+          ls -R
 
       - name: Terraform init
         id: init
