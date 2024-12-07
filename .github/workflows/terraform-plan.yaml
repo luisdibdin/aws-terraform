@@ -147,10 +147,10 @@ jobs:
             exit 1
           elif [ ${{ steps.plan.outputs.exitcode }} -eq 0 ]; then
             echo "Terraform plan has no changes."
-            echo "tfplan-diff=false" >> $GITHUB_ENV
+            echo "tfplan-diff=false" >> $GITHUB_OUTPUT
           elif [ ${{ steps.plan.outputs.exitcode }} -eq 2 ]; then
             echo "Terraform plan found changes."
-            echo "tfplan-diff=true" >> $GITHUB_ENV
+            echo "tfplan-diff=true" >> $GITHUB_OUTPUT
           fi
           exit 0
    
