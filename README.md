@@ -10,7 +10,7 @@ The terraform-plan and terraform-apply workflows are designed to work together b
 
 This workflow runs a terraform plan and posts the result as comment if running on a pull request. The output of the plan can be uploaded if using prior to the terraform apply workflow. The plan also outputs a detailed exitcode:
 
-- 0: succesfful plan with no changes
+- 0: succesful plan with no changes
 - 1: an error in the plan
 - 2: a succesfful plan with changes
 
