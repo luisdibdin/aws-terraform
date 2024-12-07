@@ -25,7 +25,6 @@ jobs:
     uses: luisdibdin/aws-terraform/.github/workflows/terraform-apply.yaml@main
     with:
       environment: dev
-      tfplan: ${{ needs.terraform-plan.outputs.tfplan }}
     secrets:
       inherit
       
