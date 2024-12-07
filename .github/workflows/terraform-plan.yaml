@@ -156,7 +156,7 @@ jobs:
    
 
       - name: Upload Plan Artifact
-        if: ${{ inputs.upload-plan }}
+        if: ${{ inputs.upload-plan }} && ${{ steps.outcome.outputs.tfplan-diff }}
         uses: actions/upload-artifact@v4
         with:
           name: ${{ github.sha }}-terraform-plan
