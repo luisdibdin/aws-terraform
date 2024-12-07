@@ -35,7 +35,7 @@ jobs:
       tfplan-diff: ${{ steps.outcome.outputs.tfplan-diff }}
   
     steps:
-      - name: Checkout Code
+      - name: Checkout code
         uses: actions/checkout@v4
       
       - name: Setup Terraform
@@ -43,14 +43,14 @@ jobs:
         with:
           terraform_version: 1.7.3
       
-      - name: Configure AWS Credentials
+      - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ secrets.TERRAFORM_PLAN_ROLE_ARN }}
           role-session-name: GitHubActionOICDTerraformPlan
           aws-region: ${{ inputs.region }}
 
-      - name: Create Backend Config
+      - name: Create backed config
         run: |
           cat << EOF > backend.hcl
           bucket         = "luis-dibdin-terraform-state-bucket"
@@ -69,18 +69,18 @@ jobs:
         id: init
         run: terraform init -input=false -backend-config=backend.hcl
 
-      - name: Terraform Validate
+      - name: Terraform validate
         id: validate
         run: terraform validate
 
-      - name: Terraform Plan
+      - name: Terraform plan
         id: plan
         run: |
           terraform plan -var-file=terraform.tfvars -no-color -detailed-exitcode -out=/tmp/tfplan
           echo "plan-file=/tmp/tfplan" >> $GITHUB_OUTPUT
         continue-on-error: true
 
-      - name: Create PR Comment
+      - name: Create PR comment
         uses: actions/github-script@v7
         if: github.event_name == 'pull_request'
         env:
@@ -139,7 +139,7 @@ jobs:
               })
             }
 
-      - name: Terraform Plan Outcome
+      - name: Terraform plan outcome
         id: outcome
         run: |
           if [ ${{ steps.plan.outputs.exitcode }} -eq 1 ]; then
@@ -154,7 +154,7 @@ jobs:
           fi
           exit 0
 
-      - name: Upload Plan Artifact
+      - name: Upload plan artifact
         if: inputs.upload-plan && steps.outcome.outputs.tfplan-diff == 'true'
         uses: actions/upload-artifact@v4
         with:
