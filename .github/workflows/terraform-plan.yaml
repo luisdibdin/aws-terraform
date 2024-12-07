@@ -156,7 +156,7 @@ jobs:
    
 
       - name: Upload Plan Artifact
-        if: ${{ inputs.upload-plan && steps.outcome.outputs.tfplan-diff }}
+        if: inputs.upload-plan && steps.outcome.outputs.tfplan-diff == 'true'
         uses: actions/upload-artifact@v4
         with:
           name: tfplan-${{ github.sha }}
