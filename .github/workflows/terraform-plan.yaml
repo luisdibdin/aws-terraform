@@ -159,5 +159,5 @@ jobs:
         if: ${{ inputs.upload-plan && steps.outcome.outputs.tfplan-diff == 'true' }}
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ github.sha }}-terraform-plan
+          name: tfplan-${{ github.sha }}
           path: ${{ steps.plan.outputs.plan-file }}

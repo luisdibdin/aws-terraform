@@ -54,7 +54,7 @@ jobs:
       - name: Download Plan Artifact
         uses: actions/download-artifact@v4
         with:
-          name: ${{ github.sha }}-terraform-plan
+          name: tfplan-${{ github.sha }}
 
       - name: Terraform init
         id: init
