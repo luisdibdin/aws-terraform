@@ -26,7 +26,7 @@ jobs:
         working-directory: ./terraform
   
     steps:
-      - name: Checkout Code
+      - name: Checkout code
         uses: actions/checkout@v4
       
       - name: Setup Terraform
@@ -34,14 +34,14 @@ jobs:
         with:
           terraform_version: 1.7.3
       
-      - name: Configure AWS Credentials
+      - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ secrets.TERRAFORM_APPLY_ROLE_ARN }}
           role-session-name: GitHubActionOICDTerraformApply
           aws-region: ${{ inputs.region }}
 
-      - name: Create Backend Config
+      - name: Create backend config
         run: |
           cat << EOF > backend.hcl
           bucket         = "luis-dibdin-terraform-state-bucket"
@@ -51,7 +51,7 @@ jobs:
           encrypt        = true
           EOF
 
-      - name: Download Plan Artifact
+      - name: Download plan artifact
         uses: actions/download-artifact@v4
         with:
           name: tfplan-${{ github.sha }}
@@ -60,6 +60,6 @@ jobs:
         id: init
         run: terraform init -input=false -backend-config=backend.hcl
 
-      - name: Terraform Apply
+      - name: Terraform apply
         id: apply
         run: terraform apply ../tfplan
