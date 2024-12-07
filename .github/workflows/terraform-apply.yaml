@@ -59,10 +59,13 @@ jobs:
         with:
           name: ${{ github.sha }}-terraform-plan
 
+      - name: Debug
+        run: ls -R
+
       - name: Terraform init
         id: init
         run: terraform init -input=false -backend-config=backend.hcl
 
       - name: Terraform Apply
         id: apply
-        run: terraform apply -var-file=terraform.tfvars /tmp/${{ github.sha }}-terraform-plan
+        run: terraform apply -var-file=terraform.tfvars ${{ github.sha }}-terraform-plan
