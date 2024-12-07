@@ -67,4 +67,4 @@ jobs:
 
       - name: Terraform Apply
         id: apply
-        run: terraform apply -var-file=terraform.tfvars tmp/tfplan
+        run: terraform apply -var-file=terraform.tfvars ../tfplan
