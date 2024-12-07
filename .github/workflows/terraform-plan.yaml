@@ -76,7 +76,7 @@ jobs:
       - name: Terraform Plan
         id: plan
         run: |
-          terraform plan -var-file=terraform.tfvars -no-color -out=/tmp/tfplan
+          terraform plan -var-file=terraform.tfvars -no-color -detailed-exitcode -out=/tmp/tfplan
           echo "plan-file=/tmp/tfplan" >> $GITHUB_OUTPUT
         continue-on-error: true
 
