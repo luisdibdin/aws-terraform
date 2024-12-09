@@ -13,7 +13,13 @@ permissions:
 
 jobs:
   terraform-plan:
+    strategy:
+      fail-fast: false
+      matrix:
+        environment: [dev, prod]
     name: Terraform Plan
     uses: luisdibdin/aws-terraform/.github/workflows/terraform-plan.yaml@main
+    with:
+      environment: ${{ matrix.environment }}
     secrets:
-      inherit
+      TERRAFORM_PLAN_ROLE_ARN: ${{ secrets[format('TERRAFORM_PLAN_ROLE_ARN_{0}', matrix.environment )] }}
