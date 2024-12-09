@@ -99,7 +99,7 @@ jobs:
             })
       
             // 2. Prepare format of the comment
-            const output = `### Plan against ${{ inputs.environment }}\`
+            const output = `### Plan against \`${{ inputs.environment }}\`
             #### Terraform Format and Style 🖌\`${{ steps.fmt.outcome }}\`
             #### Terraform Initialization ⚙️\`${{ steps.init.outcome }}\`
             #### Terraform Validation 🤖\`${{ steps.validate.outcome }}\`
