@@ -17,7 +17,7 @@ jobs:
       matrix:
         environment: [dev, prod]
     name: Terraform Plan
-    uses: luisdibdin/aws-terraform/.github/workflows/terraform-plan.yaml@main
+    uses: luisdibdin/aws-terraform/.github/workflows/terraform-plan.yaml@multi-env-plan
     with:
       environment: ${{ matrix.environment }}
     secrets:
