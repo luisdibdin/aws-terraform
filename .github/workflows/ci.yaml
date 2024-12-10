@@ -16,7 +16,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        environment: [dev, prod]
+        environment: [dev]
     name: Terraform Plan
     uses: luisdibdin/aws-terraform/.github/workflows/terraform-plan.yaml@main
     with:
